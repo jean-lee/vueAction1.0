@@ -28,10 +28,9 @@ export default {
   },
   created() {
     this.$http.get('/api/seller').then((response) => {
-      response = response.body()
+      response = response.json()
       if (response.errno === ERR_OK) {
         this.seller = response.data
-        console.log(this.seller)
       }
     })
   },
