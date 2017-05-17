@@ -42,7 +42,8 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-  @import './common/stylus/index'
+  @import "./common/stylus/mixin.styl"
+
   .tab
     display flex
     width 100%
