@@ -35,8 +35,8 @@
       <div v-show="detailShow" class="detail">
         <div class="detail-wrap clearfix">
           <div class="detail-main">
-            <p>{{seller.bulletin}}</p>
-            <p>{{seller.bulletin}}</p>
+            <h1 class="name">{{seller.name}}</h1>
+            <div></div>
           </div>
         </div>
         <div class="detail-close">
