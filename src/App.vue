@@ -31,7 +31,7 @@ export default {
       response = response.body
       if (response.errno === ERR_OK) {
         this.seller = response.data
-        console.log(this.seller)
+        // console.log(this.seller)
       }
     })
   },
@@ -42,7 +42,7 @@ export default {
 </script>
 
 <style lang="stylus" rel="stylesheet/stylus">
-  @import "./common/stylus/mixin.styl"
+  @import "./common/stylus/mixin"
 
   .tab
     display flex
