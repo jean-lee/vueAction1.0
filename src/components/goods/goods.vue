@@ -32,15 +32,20 @@
         </li>
       </ul>
     </div>
+    <shop-cart></shop-cart>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
 import BScroll from 'better-scroll'
+import shopCart from 'components/shopcart/shopcart'
 
 const ERR_OK = 0
 
 export default {
+  components: {
+    'shop-cart': shopCart
+  },
   props: {
     seller: {
       type: Object
