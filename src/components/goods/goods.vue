@@ -1,3 +1,111 @@
+
+<script type="text/ecmascript-6">
+import BScroll from 'better-scroll'
+import shopCart from 'components/shopcart/shopcart'
+import cartControl from 'components/cartcontrol/cartcontrol'
+
+const ERR_OK = 0
+
+export default {
+  components: {
+    'shop-cart': shopCart,
+    'cart-control': cartControl
+  },
+  props: {
+    seller: {
+      type: Object
+    }
+  },
+  data() {
+    return {
+      goods: [],
+      listHeight: [],
+      scrollY: 0
+    }
+  },
+  computed: {
+    currentIndex() {
+      for (let i = 0; i < this.listHeight.length; i++) {
+        let height1 = this.listHeight[i]
+        let height2 = this.listHeight[i + 1]
+        if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+          return i
+        }
+      }
+      return 0
+    },
+    selectFoods () {
+      let foods = []
+      this.goods.forEach((good) => {
+        good.foods.forEach((food) => {
+          if (food.count) {
+            foods.push(food)
+          }
+        })
+      })
+      return foods
+    }
+  },
+  created() {
+    this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guaranteen']
+
+    this.$http.get('/api/goods').then((response) => {
+      response = response.body
+      if (response.errno === ERR_OK) {
+          this.goods = response.data
+          this.$nextTick(() => {
+            this._initSccroll()
+            this._calculateHeight()
+          })
+        }
+    })
+  },
+  methods: {
+    selectMenu(index, event) {
+      if (!event._constructed) {
+        return
+      }
+      let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook')
+      let el = foodList[index]
+      this.foodsScroll.scrollToElement(el, 300)
+    },
+    _drop(target) {
+        this.$ref.shopcart.drop(target)
+      },
+    _initSccroll() {
+      this.menuScroll = new BScroll(this.$els.menuWrapper, {
+        click: true
+      })
+
+      this.foodsScroll = new BScroll(this.$els.foodsWrapper, {
+        click: true,
+        probeType: 3
+      })
+
+      this.foodsScroll.on('scroll', (pos) => {
+        this.scrollY = Math.abs(Math.round(pos.y))
+      })
+    },
+    _calculateHeight() {
+      let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook')
+      let height = 0
+      this.listHeight.push(height)
+      for (let i = 0; i < foodList.length; i++) {
+        let item = foodList[i]
+        height += item.clientHeight
+        this.listHeight.push(height)
+      }
+  }
+  },
+  events: {
+    'cart.add'(target) {
+      this._drop(target)
+    }
+  }
+}
+</script>
+
+
 <template lang="html">
   <div class="goods">
     <div class="menu-wrapper" v-el:menu-wrapper>
@@ -35,97 +143,9 @@
         </li>
       </ul>
     </div>
-    <shop-cart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shop-cart>
+    <shop-cart v-ref:shopcart :select-foods='selectFoods' :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shop-cart>
   </div>
 </template>
-
-<script type="text/ecmascript-6">
-import BScroll from 'better-scroll'
-import shopCart from 'components/shopcart/shopcart'
-import cartControl from 'components/cartcontrol/cartcontrol'
-
-const ERR_OK = 0
-
-export default {
-  components: {
-    'shop-cart': shopCart,
-    'cart-control': cartControl
-  },
-  props: {
-    seller: {
-      type: Object
-    }
-  },
-  data() {
-    return {
-      goods: [],
-      listHeight: [],
-      scrollY: 0
-    }
-  },
-  computed: {
-    currentIndex() {
-      for (let i = 0; i < this.listHeight.length; i++) {
-        let height1 = this.listHeight[i]
-        let height2 = this.listHeight[i + 1]
-        if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
-          return i
-        }
-      }
-      return 0
-    }
-  },
-  created() {
-    this.classMap = ['decrease', 'discount', 'special', 'invoice', 'guaranteen']
-
-    this.$http.get('/api/goods').then((response) => {
-      response = response.body
-      if (response.errno === ERR_OK) {
-          this.goods = response.data
-          this.$nextTick(() => {
-            this._initSccroll()
-            this._calculateHeight()
-          })
-        //  console.log(this.goods)
-        }
-    })
-  },
-  methods: {
-    selectMenu(index, event) {
-      if (!event._constructed) {
-        return
-      }
-      let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook')
-      let el = foodList[index]
-      this.foodsScroll.scrollToElement(el, 300)
-    },
-    _initSccroll() {
-      this.menuScroll = new BScroll(this.$els.menuWrapper, {
-        click: true
-      })
-
-      this.foodsScroll = new BScroll(this.$els.foodsWrapper, {
-        click: true,
-        probeType: 3
-      })
-
-      this.foodsScroll.on('scroll', (pos) => {
-        this.scrollY = Math.abs(Math.round(pos.y))
-      })
-    },
-    _calculateHeight() {
-      let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook')
-      let height = 0
-      this.listHeight.push(height)
-      for (let i = 0; i < foodList.length; i++) {
-        let item = foodList[i]
-        height += item.clientHeight
-        this.listHeight.push(height)
-      }
-  }
-  }
-}
-</script>
 
 <style lang="stylus" rel="stylesheet/stylus">
   @import '../../common/stylus/mixin'
