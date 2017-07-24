@@ -3,13 +3,15 @@
 import BScroll from 'better-scroll'
 import ShopCart from 'components/shopcart/shopcart'
 import CartControl from 'components/cartcontrol/cartcontrol'
+import Food from 'components/food/food'
 
 const ERR_OK = 0
 
 export default {
   components: {
     'shop-cart': ShopCart,
-    'cart-control': CartControl
+    'cart-control': CartControl,
+    'food': Food
   },
   props: {
     seller: {
@@ -20,7 +22,8 @@ export default {
     return {
       goods: [],
       listHeight: [],
-      scrollY: 0
+      scrollY: 0,
+      selectedFood: {}
     }
   },
   computed: {
@@ -34,6 +37,7 @@ export default {
       }
       return 0
     },
+    // 查看商品详情
     selectFoods () {
       let foods = []
       this.goods.forEach((good) => {
@@ -68,6 +72,13 @@ export default {
       let foodList = this.$els.foodsWrapper.getElementsByClassName('food-list-hook')
       let el = foodList[index]
       this.foodsScroll.scrollToElement(el, 300)
+    },
+    selectFood (food, event) {
+      if (!event._constructed) {
+        return
+      }
+      this.selectedFood = food
+      this.$refs.food.show()
     },
     _drop(target) {
       // 异步执行下落动画-体验优化
@@ -123,7 +134,7 @@ export default {
         <li v-for="item in goods" class="food-list food-list-hook">
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="food in item.foods" class="food-item border-1px">
+            <li v-for="food in item.foods" class="food-item border-1px" @click="selectFood(food, $event)">
               <div class="icon">
                 <img width="57" height="57" :src="food.icon" alt="">
               </div>
@@ -148,6 +159,7 @@ export default {
     </div>
     <shop-cart v-ref:shopcart :select-foods='selectFoods' :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shop-cart>
   </div>
+  <food v-ref:food :food="selectedFood"></food>
 </template>
 
 <style lang="stylus" rel="stylesheet/stylus">
