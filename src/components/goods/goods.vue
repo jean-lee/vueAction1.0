@@ -1,15 +1,15 @@
 
 <script type="text/ecmascript-6">
 import BScroll from 'better-scroll'
-import shopCart from 'components/shopcart/shopcart'
-import cartControl from 'components/cartcontrol/cartcontrol'
+import ShopCart from 'components/shopcart/shopcart'
+import CartControl from 'components/cartcontrol/cartcontrol'
 
 const ERR_OK = 0
 
 export default {
   components: {
-    'shop-cart': shopCart,
-    'cart-control': cartControl
+    'shop-cart': ShopCart,
+    'cart-control': CartControl
   },
   props: {
     seller: {
@@ -70,8 +70,11 @@ export default {
       this.foodsScroll.scrollToElement(el, 300)
     },
     _drop(target) {
-        this.$ref.shopcart.drop(target)
-      },
+      // 异步执行下落动画-体验优化
+      this.$nextTick(() => {
+        this.$refs.shopcart.drop(target)
+      })
+    },
     _initSccroll() {
       this.menuScroll = new BScroll(this.$els.menuWrapper, {
         click: true
