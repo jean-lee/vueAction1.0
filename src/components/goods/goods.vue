@@ -167,7 +167,7 @@ export default {
 
   .goods
     display flex
-    position fixed
+    position absolute
     top 174px
     bottom 46px
     width 100%

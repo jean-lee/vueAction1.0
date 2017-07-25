@@ -133,7 +133,7 @@ export default {
       if (this.totalPrice < this.minPrice) {
         return
       }
-      window.alert('支付${this.totalPrice}')
+      window.alert(`支付${this.totalPrice}`)
     }
   },
     transitions: {
@@ -235,6 +235,7 @@ export default {
   bottom: 0
   z-index: 50
   width: 100%
+  height: 48px
   .content
     display: flex
     background: #141d27
@@ -243,11 +244,11 @@ export default {
       flex: 1
       .logo-wrapper
         display: inline-block
+        vertical-align: top
         position: relative
         top: -10px
         margin: 0 12px
         padding: 6px
-        vertical-align: top
         width: 56px
         height: 56px
         box-sizing: border-box
