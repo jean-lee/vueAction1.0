@@ -111,9 +111,8 @@ const ALL = 2
     border-bottom: 1px solid rgba(7, 17, 27, 0.1)
     color: rgb(147, 153, 159)
     font-size: 0
-    &.on
-      .icon-check_circle
-        color: #00c850
+    .on
+      color: #00c850
     .icon-check_circle
       display: inline-block
       vertical-align: top

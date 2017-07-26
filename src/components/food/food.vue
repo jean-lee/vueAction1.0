@@ -4,6 +4,7 @@ import CartControl from 'components/cartcontrol/cartcontrol'
 import Split from 'components/split/split'
 import Ratingselet from 'components/ratingselect/ratingselect'
 import Vue from 'vue'
+import {formatDate} from 'common/js/date.js'
 
 // const POSITIVE = 0
 // const NEGATIVE = 1
@@ -31,6 +32,26 @@ export default {
         positive: '满意',
         negative: '吐槽'
       }
+    }
+  },
+  events: {
+    'ratingtype.select' (type) {
+      this.selectType = type
+      this.$nextTick(() => {
+        this.scroll.refresh()
+      })
+    },
+    'content.toggle' (content) {
+      this.onlyContent = content
+      this.$nextTick(() => {
+        this.scroll.refresh()
+      })
+    }
+  },
+  filters: {
+    formatDate(time) {
+      let date = new Date(time)
+      return formatDate(date, 'yyyy-MM-dd hh:mm')
     }
   },
   methods: {
@@ -113,13 +134,13 @@ export default {
                 <span class="name">{{rating.username}}</span>
                 <img width="12" height="12" :src="rating.avatar" calss="avatar">
               </div>
-              <div class="time">{{rating.rateTime}}</div>
+              <div class="time">{{rating.rateTime | formatDate}}</div>
               <p class="text">
                 <span :class="{'icon-thumb_up': rating.rateType === 0, 'icon-thumb_down': rating.rateType === 1}"></span>{{rating.text}}
               </p>
             </li>
           </ul>
-          <div class="no-ratings" v-show="!food.ratings || !food.ratings"></div>
+          <div class="no-ratings" v-show="!food.ratings || !food.ratings.length">暂无评价</div>
         </div>
     </div>
   </div>
@@ -268,6 +289,10 @@ export default {
             color: rgb(0, 160, 220)
           .icon-thumb_down
             color: rgb(147, 153, 159)
+      .no-ratings
+        padding 16px 0
+        font-size: 12px
+        color: rgb(147, 153, 159)
 
 
 </style>
