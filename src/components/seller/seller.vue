@@ -2,12 +2,24 @@
 import BScroll from 'better-scroll'
 import star from 'components/star/star'
 import split from 'components/split/split'
-
+import {saveToLocal, loadFromLocal} from 'common/js/store'
 export default {
   name: 'seller',
   props: {
     seller: {
       type: Object
+    }
+  },
+  data () {
+    return {
+      favorite: (() => {
+        return loadFromLocal(this.seller.id, 'favorite', false)
+      })()
+    }
+  },
+  computed: {
+    favoriteText () {
+     return this.favorite ? '已收藏' : '收藏'
     }
   },
   components: {
@@ -40,11 +52,11 @@ export default {
       if (this.seller.pics) {
       let picWidth = 120
       let margin = 6
-      let width = (picWidth + margin) * this.seller.pics.length - 6
+      let width = (picWidth + margin) * this.seller.pics.length - margin
       this.$els.picList.style.width = width + 'px'
       this.$nextTick(() => {
         if (!this.picScroll) {
-          this.picScroll = new BScroll(this.$els.pics, {
+          this.picScroll = new BScroll(this.$els.picWrapper, {
             scrollX: true,
             eventPassthrough: 'vertical'
           })
@@ -53,6 +65,13 @@ export default {
         }
       })
       }
+    },
+    toogleFavorite (event) {
+      if (!event._constructed) {
+        return
+      }
+      this.favorite = !this.favorite
+      saveToLocal(this.seller.id, 'favorite', this.favorite)
     }
   }
 }
@@ -88,6 +107,10 @@ export default {
           </div>
         </li>
       </ul>
+      <div class="favorite" @click="toogleFavorite">
+        <span class="icon-favorite" :class="{'active':favorite}"></span>
+        <span class="text">{{favoriteText}}</span>
+      </div>
     </div>
     <split></split>
     <div class="bulletin">
@@ -104,14 +127,21 @@ export default {
     </div>
     <split></split>
     <div class="pics">
-      <h1 class="title">商家实景</h1>
-      <div class="pic-wrapper">
-        <ul class="pic-list" v-el:pics>
+      <h1 class="title border-1px">商家实景</h1>
+      <div class="pic-wrapper" v-el:pic-wrapper>
+        <ul class="pic-list" v-el:pic-list>
           <li class="pic-item" v-for="pic in seller.pics">
             <img :src="pic" width="120" height="90">
           </li>
         </ul>
       </div>
+    </div>
+    <split></split>
+    <div class="info">
+      <h1 class="title">商家信息</h1>
+      <ul>
+        <li class="info-item" v-for="info in seller.infos">{{info}}</li>
+      </ul>
     </div>
   </div>
 </div>
@@ -171,6 +201,24 @@ export default {
             .strees
               line-height: 24px
               font-size: 24px
+      .favorite
+        position: absolute
+        width: 50px
+        right: 11px
+        top: 18px
+        text-align: center
+        .icon-favorite
+          display: block
+          margin-bottom: 4px
+          line-height 24px
+          font-size: 24px
+          color: #d4d6d9
+          &.active
+            color: rgb(240, 20, 20)
+        .text
+          line-height: 10px
+          color: rgb( 77, 25, 93)
+          font-size: 9px
     .bulletin
       padding: 18px 18px 0
       .title
@@ -236,6 +284,22 @@ export default {
             height: 90px
             &:last-child
               margin-right: 0
+    .info
+      padding: 18px 18px 0 18px
+      color: rgb(7, 17, 27)
+      .title
+        padding-bottom: 12px
+        line-height: 18px
+        border-1px( rgba(7, 17, 27, 0.1))
+        font-size: 14px
+      .info-item
+        padding: 16px 12px
+        line-height: 16px
+        border-1px( rgba(7, 17, 27, 0.1))
+        font-size: 12px
+        &:last-child
+          border: none
+
 
 
 
